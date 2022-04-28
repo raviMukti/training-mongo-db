@@ -1,1 +1,73 @@
 ## Training Mongo DB
+
+- MongoDB merupakan free dan opensource database management system. MongoDB merupakan database management system berbasis document. MongoDB hampir mendukung semua bahasa pemrograman sebagai client nya. MongoDB tidak menggunakan SQL, namun menggunakan JavaScript sebagai bahasa utama untuk manipulasi document
+- Document oriented database merupakan sistem database yang digunakan untuk memanipulasi data dalam bentuk document (semi structured data). Biasanya document disimpan dalam bentuk JSON atau XML. Document oriented database biasanya bertolak belakang dengan relational database. Relational database biasanya menyimpan data dalam bentuk table, dan menyimpan relasinya di table lain. Document oriented database biasanya menyimpan data dalam bentuk JSON atau XML, dan menyimpan relasinya sebagai embedded object di dalam document yang sama.
+- Database adalah tempat menyimpan collection. Semua collection harus disimpan di database. Biasanya database digunakan untuk memisahkan data secara logical per aplikasi, artinya biasanya satu aplikasi akan memiliki satu database. Jarang sekali kita akan menggunakan satu database untuk beberapa aplikasi. Di Mongo Kita tidak perlu secara eksplisit membuat database. MongoDB akan secara otomatis membuatkan database sesuai dengan nama database yang kita pilih. Untuk memilih nama database, kita bisa menggunakan perintah “use” diikuti nama database. Database akan dibuat ketika pertama kali kita membuat collection
+- Command
+    - `show database` : melihat semua database
+    - `use database` : untuk menggunakan database
+- Untuk melihat properti apa saja yang ada pada database kita bisa menggunakan object db, berikut adalah salah satu contoh list command nya :
+    - `db.dropDatabase()` : Menghapus database
+    - `db.getName()` : Mengambil nama database
+    - `db.hostInfo()` : Mengambil informasi host tempat mongodb
+    - `db.version()` : Mengambil versi database
+    - `db.stats()` : Mengambil statistik penggunaan database
+- Collection adalah tempat menyimpan document. Maximum per document yang bisa disimpan adalah 16MB. Maximum level nested document yang bisa disimpan adalah 100 level
+- Database method untuk collections adalah sebagai berikut :
+    - `db.getCollectionNames()` : Mengambil semua nama collection
+    - `db.createCollectionName(name)` : Membuat collection baru
+    - `db.getCollection(name)` : Mendapatkan object collection
+    - `db.<name>` : Sama dengan db.getCollection(<name>)
+    - `db.getCollectionInfos()` : Mendapat informasi semua collection
+- Collection methods :
+    - db.<collection>.find() : Mengambil semua document
+    - db.<collection>.count() : Mengambil jumlah document
+    - db.<collection>.drop() : Menghapus collection
+    - db.<collection>.totalSize() : Mengambil total ukuran collection
+    - db.<collection>.stats() : Mengambil informasi statistik collection
+- Pindah dari relational database ke document database bukanlah hal yang sesederhana hanya dengan memindahkan semua table ke collection. Penggunaan document database tidak akan mendatangkan manfaat besar jika kita tidak mengerti cara memodelkan data untuk kebutuhan aplikasi kita. Saat memodelkan data menggunakan relational database, biasanya kita mengacu ke database normalization. Saat memodelkan data menggunakan document database, kita harus mengacu ke penggunaan aplikasi dalam melakukan query, update dan memproses data
+- Tidak seperti di relational database, di MongoDB kita bisa memasukkan data ke collection secara langsung tanpa mendefinisikan schema collection nya. Schema untuk collection di MongoDB sangat flexible, tiap document bisa berbeda. Tidak seperti table di relational database yang harus sama  tiap record. Namun pada prakteknya, sangat direkomendasikan menggunakan jenis data yang sama untuk tiap collection, walaupun bisa berbeda-beda di collection yang sama
+- Saat membuat dokumen di MongoDB, kita wajib menambahkan primary key. Tidak seperti relational database yang bebas membuat column untuk primary key, di MongoDB, primary key wajib menggunakan field _id. Selain itu primary key tidak bisa lebih dari 1 field, hanya bisa field _id, jadi jika kita ingin membuat composite primary key, maka kita hanya bisa melakukan dengan menggunakan 1 field _id
+- Embedded vs Reference Paradighm
+- Gunakan Embedded jika :
+    - Antar document saling ketergantungan
+    - Tidak bisa langsung melakukan perubahan ke embedded document
+    - Embedded document selalu dibutuhkan ketika mengambil data document
+- Gunakan reference jika :
+    - Antar document bisa berdiri sendiri dan tidak terlalu ketergantungan satu sama lain
+    - Bisa melakukan manipulasi data langsung terhadap reference document
+    - Reference document tidak selalu dibutuhkan saat mengambil document
+- BSON singkatan dari Binary JSON, yaitu binary-encoded serialization dokumen seperti JSON. Sama seperti JSON, di BSON juga bisa kita bisa menggunakan embedded object, array dan lain-lain
+- ObjectId adalah random data yang unik, cepat untuk digenerate dan terurut. Nilai ObjectId memiliki ukuran panjang 12 byte, konsisten terdiri dari informasi 4 byte timestamp, 5 byte random value, dan 3 byte incrementing counter. ObjectId digunakan sebagai sebagai default _id (primary key) di document jika kita tidak secara eksplisit menyebutkan _id document nya
+- BSON Date adalah 64 bit integer yang merepresentasikan angka milisecond sejak Unix epoch (1 Januari 1970). Nilai ini bisa merepresentasikan waktu dengan jarak 290 juta tahun sebelum dan setelah unix epoch. ISODate merupakan representasi waktu yang digunakan oleh MongoDB. Date ini kompatibel dengan Date di JavaScript
+- Untuk menyimpan data ke MongoDB, kita perlu membuat document dalam bentuk JSON. Field _id tidak wajib dimasukkan, jika kita tidak memasukkan field _id, maka secara otomatis MongoDB akan membuat _id baru secara random dengan tipe data ObjectId. Atau kita juga bisa secara eksplisit membuat ObjectId baru dengan menggunakan perintah “new ObjectId()”
+- Command insert data ke dalam collection :
+    - `db.<collection>.insertOne(document)` : Menambah document ke collection
+    - `db.<collection>.insertMany(document)` : Menambah semua document di array ke collection
+    - `db.<collection>.insert(document/array)` : Menambah satu document atau banyak document
+- Sama seperti di relational database, di MongoDB pun kita bisa melakukan query atau pencarian document yang sudah kita simpan di collection. Query document function : 
+    - `db.<collection>.find(query)` : Mencari document dengan query
+- Comparison operator :
+    - $eq : Membandingkan value dengan value lain
+    - $gt : Membandingkan value lebih besar dari value lain
+    - $gte : Membandingkan value lebih besar atau sama dengan value lain
+    - $lt : Membandingkan value lebih kecil dari value lain
+    - $lte : Membandingkan value lebih kecil atau sama dengan value lain
+    - $in : Membandingkan value dengan value yang ada di array
+    - $nin : Membandingkan value tidak ada dalam value yang ada di array
+    - $ne : Membandingkan value tidak sama dengan value lain
+- Logical query operator :
+    - $and : Menggabungkan query dengan operasi AND, mengembalikan document jika semua kondisi benar
+    - $or : Menggabungkan query dengan operasi OR, mengembalikan document jika salah satu kondisi benar
+    - $nor : Menggabungkan query dengan operasi NOR, mengembalikan document yang gagal di semua kondisi
+    - $not : Membalikkan kondisi, mengembalikan document yang tidak sesuai kondisi
+- Element query operator :
+    - $exists : Mencocokkan document yang memiliki field tersebut // Not Null
+    - $type : Mencocokkan document yang memiliki type field tersebut
+- Evaluation query operator : 
+    - $expr : Menggunakan aggregation operation
+    - $jsonSchema : Validasi document sesuai dengan JSON schema
+    - $mod : Melakukan operasi modulo 
+    - $regex : Mengambil document sesuai dengan regular expression (PCRE)
+    - $text : Melakukan pencarian menggunakan text
+    - $where : Mengambil document dengan JavaScript Function
