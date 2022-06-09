@@ -20,11 +20,11 @@
     - `db.<name>` : Sama dengan db.getCollection(<name>)
     - `db.getCollectionInfos()` : Mendapat informasi semua collection
 - Collection methods :
-    - db.<collection>.find() : Mengambil semua document
-    - db.<collection>.count() : Mengambil jumlah document
-    - db.<collection>.drop() : Menghapus collection
-    - db.<collection>.totalSize() : Mengambil total ukuran collection
-    - db.<collection>.stats() : Mengambil informasi statistik collection
+    - `db.<collection>.find()` : Mengambil semua document
+    - `db.<collection>.count()` : Mengambil jumlah document
+    - `db.<collection>.drop()` : Menghapus collection
+    - `db.<collection>.totalSize()` : Mengambil total ukuran collection
+    - `db.<collection>.stats()` : Mengambil informasi statistik collection
 - Pindah dari relational database ke document database bukanlah hal yang sesederhana hanya dengan memindahkan semua table ke collection. Penggunaan document database tidak akan mendatangkan manfaat besar jika kita tidak mengerti cara memodelkan data untuk kebutuhan aplikasi kita. Saat memodelkan data menggunakan relational database, biasanya kita mengacu ke database normalization. Saat memodelkan data menggunakan document database, kita harus mengacu ke penggunaan aplikasi dalam melakukan query, update dan memproses data
 - Tidak seperti di relational database, di MongoDB kita bisa memasukkan data ke collection secara langsung tanpa mendefinisikan schema collection nya. Schema untuk collection di MongoDB sangat flexible, tiap document bisa berbeda. Tidak seperti table di relational database yang harus sama  tiap record. Namun pada prakteknya, sangat direkomendasikan menggunakan jenis data yang sama untuk tiap collection, walaupun bisa berbeda-beda di collection yang sama
 - Saat membuat dokumen di MongoDB, kita wajib menambahkan primary key. Tidak seperti relational database yang bebas membuat column untuk primary key, di MongoDB, primary key wajib menggunakan field _id. Selain itu primary key tidak bisa lebih dari 1 field, hanya bisa field _id, jadi jika kita ingin membuat composite primary key, maka kita hanya bisa melakukan dengan menggunakan 1 field _id
@@ -71,3 +71,212 @@
     - $regex : Mengambil document sesuai dengan regular expression (PCRE)
     - $text : Melakukan pencarian menggunakan text
     - $where : Mengambil document dengan JavaScript Function
+- Array Query Operator :
+    - $all : Mencocokkan array yang mengandung elemen-elemen tertentu
+    - $elemMatch : Mengambil document jika tiap element di array memenuhi kondisi tertentu
+    - $size : Mengambil document jika ukuran array sesuai
+- Projection Operator :
+    - Pada function find, terdapat parameter kedua setelah query, yaitu projection
+    - Projection adalah memilih field mana yang ingin kita ambil atau hide
+    - db.<collection>.find(query, projection)
+    - Projection Operator :
+        - $ : Limit array hanya mengembalikan data pertama yang match dengan array operator
+        - $elemMatch : Limit array hanya mengembalikan data pertama yang match dengan kondisi query
+        - $meta : Mengembalikan informasi metadata yang didapat dari setiap matching document
+        - $slice : Mengontrol jumlah data yang ditampilkan pada array
+- Query Modifier :
+    - Query Modifier adalah memodifikasi hasil query yang telah kita lakukan
+    - Contoh yang sering kita lakukan seperti, mengubah query menjadi jumlah data, membatasi jumlah data dengan paging, dan lain-lain
+    - Untuk memodifikasi hasil query, kita bisa menambahkan function query modifier setelah menggunakan function find
+    - Query Modifier Function :
+        - `count()` : Mengambil jumlah data hasil query
+        - `limit(size)` : Membatasi jumlah data yang didapat dari query
+        - `skip(size)` : Menghiraukan data pertama hasil query sejumlah yang ditentukan
+        - `sort(query)` : Mengurutkan hasil data query
+- Update Document :
+    - Sama seperti database lainnya, di MongoDB juga kita bisa mengubah document yang sudah kita insert ke collection
+    - Namun berbeda dengan perintah SQL, di MongoDB, untuk mengubah document, kita diberikan beberapa function
+    - Untuk update document, kita bisa menggunakan collection : db.<collection>.<updateFunction>()
+    - Update Document Function : 
+        - `updateOne()` : Mengubah satu document
+        - `updateMany()` : Mengubah banyak document sekaligus
+        - `replaceOne()` : Mengubah total satu document dengan document baru
+- Field Update Operator : 
+    - Sebelumnya kita sudah tau kalo untuk update document di MongoDB kita bisa menggunakan operator $set dan $unset
+    - Namun sebenarnya masih banyak operator yang bisa kita gunakan
+    - Update Document Function :
+        - $set : Mengubah nilai field di document
+        - $unset : Menghapus field di document
+        - $rename : Mengubah nama field di document
+        - $inc : Menaikan nilai number di field sesuai dengan jumlah tertentu
+        - $currentDate : Mengubah field menjadi waktu saat ini
+- Array Update Operator :
+    - Secara default, saat kita mengubah field dengan tipe array, maka seluruh array akan diubah
+    - Kadang  kita ingin menambah, atau hanya mengubah data array tanpa harus mengubah seluruh field array
+    - Hal ini bisa dilakukan di MongoDB
+    - Array Update Operator (1) :
+        - $ : Mengupdate data array pertama sesuai kondisi query
+        - $[] : Mengupdate semua data array sesuai kondisi query
+        - $[<identifier>] : Mengupdate semua data array yang sesuai kondisi arrayFilters
+        - <index> : Mengupdate data array sesuai dengan nomor index
+    - Array Update Operator (2) :
+        - $addToset : Menambahkan value ke array, dihiraukan jika sudah ada
+        - $pop : Menghapus element pertama (-1) atau terakhir (1) array
+        - $pull : Menghapus semua element di array yang sesuai kondisi
+        - $push : Menambahkan element ke array
+        - $pullAll : Menghapus semua element di array
+    - Array Update Operator Modifier :
+        - $each : Digunakan di $addToSet dan $push, untuk menambahkan multiple element
+        - $position : Digunakan di $push untuk mengubah posisi menambahkan data
+        - $slice : Digunakan di $push untuk menentukan jumlah maksimal data array
+        - $sort : Digunakan untuk mengurutkan array setelah operasi $push
+- Delete Document :
+    - MongoDB memiliki function yang bisa kita gunakan untuk menghapus document di collection secara permanen
+    - Document yang sudah kita hapus, tidak akan bisa dikembalikan lagi
+    - Delete Document Function :
+        - `db.<collection>.deleteOne(query)` : Menghapus satu document yang sesuai dengan kondisi query
+        - `db.<collection>.deleteMany(query)` : Menghapus banyak document yang sesuai dengan kondisi query
+- Bulk Write Operations :
+    - Komunikasi antara aplikasi dengan database biasanya dilakukan secara request-response
+    - Artinya tiap perintah yang ingin kita kirimkan dari aplikasi ke database, akan diresponse secara langsung oleh database
+    - Proses tersebut akan sangat lambat, jika kita menghadapi kasus harus memanipulasi data besar secara langsung. Misal upload data dari file dengan jumlah jutaan ke dalam database
+    - MongoDB mendukung Bulk Write Operation, yaitu operasi bulk yang dalam satu request, kita bisa mengirim banyak perintah
+    - Fitur ini cocok pada kasus jika kita ingin melakukan operasi bulk atau batch secara banyak sekaligus
+    - Bulk Write Function : 
+        - `db.<collection>.insertMany()` : Insert document secara banyak sekaligus
+        - `db.<collection>.updateMany()` : Update document secara banyak sekaligus
+        - `db.<collection>.deleteMany()` : Delete document secara banyak sekaligus
+        - `db.<collection>.bulkWrite()` : Melakukan operasi write (insert, update, delete) banyak secara sekaligus
+        - Supported Bulk Write Operation :
+            - `insertOne`
+            - `updateOne`
+            - `updateMany`
+            - `replaceOne`
+            - `deleteOne`
+            - `deleteMany`
+- Schema Validation :
+    - Pada Relational DB, kita biasanya menambahkan constraint terhadap data yang ada di tabel
+    - Misal, maksimal karakter, Enum string, Not Null, dan lain-lain
+    - Di MongoDB, fitur untuk validasi data lebih canggih dibanding constraint di Relational DB
+    - MongoDB mendungkung Schema Validation menggunakan JSON Schema
+    - JSON Schema adalah standar resmi untuk memvalidasi data JSON
+    - Dengan menggunakan JSON Schema, kita bisa memberi batasan, data JSON apa yang valid, sehingga bisa dimasukkan ke dalam collection [json-schema.org](http://json-schema.org/)
+- Indexes :
+    - Index adalah fitur di MongoDB untuk mengefisienkan proses query. Tanpa Index, MongoDB harus melakukan proses query dengan cara collection scan (mencari keseluruh data dari awal sampai akhir)
+    - Jika terdapat Index pada collection MongoDB, MongoDB bisa menggunakan Index untuk mendapatkan data, tanpa harus melakukan pencarian keseluruh document
+    - Index adalah struktur data khusus yang menyimpan data dalam struktur yang mudah untuk dicari
+    - Index menyimpan spesifik field, lalu mengurutkan data field tersebut. Hal ini tidak hanya mempermudah ketika proses pencarian, namun mempermudah ketika kita butuh melakukan pencarian dalam bentuk range document (seperti paging)
+    - Secara dasar, Index di MongoDB, cara kerjanya sama seperti Index di Relational DB
+    - Create Index Function :
+        - `db.<collection>.createIndex()` : Membuat index di collection
+        - `db.<collection>.getIndexes()` : Melihat semua index di collection
+        - `db.<collection>.dropIndex()` : Menghapus index di collection
+    - Single Field Index :
+        - Secara default, field _id di MongoDB sudah di index secara otomatis, jadi kita tidak perlu membuat index lagi secara manual untuk field _id
+        - MongoDB mendukung penuh pembuatan index di semua field yang ada di document. Dengan begitu, ini bisa mempercepat proses query di MongoDB untuk query terhadap field tersebut
+    - Compound Indexes :
+        - Jika kita butuh melakukan query terhadap lebih dari satu field, kita juga bisa membuat index terhadap lebih dari satu field, atau disebut Compound Index
+        - MongoDB membatasi pembuatan maksimal field yang bisa dibuat di compound index adalah 32 field
+- Text Indexes :
+    - MongoDB menyediakan text index untuk mendukung pencarian text di tipe data string
+    - Text index tidak hanya bisa digunakan pada field dengan tipe data string, namun juga pada array berisi tipe data string
+- Wildcard Indexes :
+    - MongoDB mendukung wildcard index, dimana ini digunakan untuk membuat index terhadap field yang belum diketahui atau field yang sering berubah-ubah
+    - Misal contoh kita punya sebuah embedded document dengan tipe field customFields, dimana isi nya bisa bebas sesuai dengan data yang dimasukkan
+    - Agar bisa mendukung proses query yang cepat pada field tersebut, kita bisa menggunakan wildcard index
+- Index Properties :
+    - MongoDB mendukung properties di index
+    - Istilah properties di Index mungkin agak sedikit membingungkan, sederhananya adalah menambahkan behaviour atau kemampuan tertentu terhadap index yang kita buat
+    - TTL Index :
+        - TTL singkatan dari  Time To Live, yaitu waktu untuk hidup
+        - TTL Index digunakan sebagai waktu hidup document di collection, artinya data akan hilang dalam kurun waktu tertentu secara otomatis
+        - TTL Index hanya dapat digunakan di field dengan tipe data Date
+        - Background proses di  MongoDB akan secara regular melakukan penghapusan data secara otomatis
+        - Sayangnya, proses background tersebut berjalan setiap 60 detik sekali
+    - Unique Index :
+        - Unique Index memastikan bahwa field-field di index tersebut tidak menyimpan data duplicate
+        - Contohnya, di MongoDB, field _id secara otomatis merupakan unique index, sehingga kita tidak bisa membuat document dengan field _id yang sama
+- Transaction :
+    - Di Relational DB, fitur yang sangat berguna dan banyak orang gunakan adalah fitur transaction
+    - Fitur transaction secara sederhana adalah menggabungkan kan beberapa operasi database dalam satu transaction, dimana transaction akan dianggap sukses jika semua operasi sukses, dan transaction akan dianggap gagal jika ada salah satu operasi yang gagal
+    - Dan jika transaction gagal, maka seluruh operasi yang sukses sebelumnya harus dibatalkan (rollback)
+    - Fitur transaction di MongoDB hanya bisa jalan di cluster (replica-set), tidak di single node
+    - Dalam cluster, Database di MongoDB akan memiliki primary data dan secondary data
+    - Transaction Function :
+        - `session.startTransaction()` : Memulai transaksi
+        - `session.commitTransaction()` : Commit transaksi
+        - `session.abortTransaction()` : Membatalkan transaksi
+    - Read Preferences :
+        - Read preferences adalah bagaimana MongoDB mengkontrol dari mana kita membaca data :
+            - primary : Semua query diambil dari primary replica set
+            - primaryPreferred : Semua query diambil dari  primary replica set, namun jika tidak ada primary replica set, maka diambil dari  secondary replica set
+            - secondary: Semua query diambil dari secondary replica set
+            - secondaryPreferred : Semua query diambil dari secondary replica set,  namun jika tidak ada secondary replica set, maka diambil dari primary replica set
+            - nearest : Semua query diambil dari replica set paling murah network latency nya
+    - Read Concern :
+        - Read Concern adalah bagaimana MongoDB mengkontrol data yang kita dapatkan :
+            - local: Data akan didapatkan di local node
+            - available : Data akan didapatkan dimanapun (tidak peduli node mana)
+            - majority : Data akan didapatkan di mayoritas data di semua node
+            - linearizable : Data akan dipastikan data paling terbaru di semua node
+            - snapshot : Data akan diambil dari mayoritas data snapshot (data yang telah di commit) di  semua node
+    - Write Concern :
+        - Write Concern adalah bagaimana MongoDB mengkontrol operasi write (insert, update, delete)
+        - <number> : Operasi dianggap sukses jika sudah berhasil melakukan operasi write di node sejumlah <number>
+        - majority : Operasi dianggap sukses jika sudah berhasil melakukan operasi write di mayoritas node
+- Security :
+    - Secara default, jika kita menjalankan MongoDB, mode yang dijalankan tidaklah aman
+    - Tidak ada Authentication dan tidak ada Authorization
+    - Agar aman, kita harus mengaktifkan fitur access control di MongoDB
+    - User Admin :
+        - User admin harus ada terlebih dahulu sebelum kita mengaktifkan access control
+        - User admin adalah user yang memiliki role userAdminAnyDatabase dan readWriteAnyDatabase
+        - Setelah membuat user admin, kita bisa menjalankan ulang MongoDB dengan perintah --auth
+- Authentication :
+    - Authentication adalah proses memverifikasi identitas pengguna ketika mengakses MongoDB
+    - Saat menggunakan authentication, maka client wajib menggunakan username dan password untuk terkoneksi ke MongoDB server
+    - MongoDB mendukung banyak mekanisme authentication, seperti :
+        - SCRAM : https://tools.ietf.org/html/rfc5802
+        - Certificate Authentication
+        - LDAP
+        - Kerberos, dan lain-lain
+    - User :
+        - Di MongoDB, kita bisa menambahkan user, dan juga menambahkan role ke user tersebut
+        - Saat kita membuat user, kita harus menentukan database sebagai authentication database
+        - Namun bukan berarti user hanya bisa mengakses database itu saya, tapi user juga bisa mengakses database lain jika mau
+        - Nama user harus unik per database, namun jika database nya berbeda, kita bisa membuat user dengan nama yang sama
+    - User Function :
+        - db.createUser() : Membuat user
+        - db.getUsers() : Mendapatkan semua user
+        - db.dropUser() : Menghapus user
+        - db.updateUser() : Mengupdate user
+        - db.changeUserPassword() : Mengubah user password
+- Authorization :
+    - Authorization adalah proses yang dilakukan setelah proses Authentication sukses
+    - Authorization dilakukan untuk melakukan pengecekan apakah user memiliki hak akses untuk melakukan sebuah action
+    - Hak akses di MongoDB disimpan dalam bentuk role
+    - Database Roles : 
+        - read : Bisa membaca data di semua collection yang bukan sistem collection
+        - readWrite : Bisa membaca dan mengubah data di semua collection yang bukan sistem collection
+        - dbAdmin : Bisa melakukan kemampuan administrasi database
+        - userAdmin : Mampu membuat user dan role
+        - dbOwner : Kombinasi readWrite, dbAdmin dan userAdmin
+    - All Database Roles :
+        - readAnyDatabase : Seperti read role, tapi untuk semua database
+        - readWriteAnyDatabase : Seperti readWrite role, tapi untuk semua database
+        - userAdminAnyDatabase : Seperti userAdmin, tapi untuk semua database
+        - dbAdminAnyDatabase : Seperti dbAdmin, tapi untuk semua database
+    - Backup & Restore Roles :
+        - backup : Kemampuan untuk melakukan backup database
+        - restore : Kemampuan untuk melakukan restore database
+    - Superuser Roles :
+        - root : Bisa melakukan apapun
+    - Privileges :
+        - Role membatasi hak akses di level database
+        - Kadang kita ingin membatasi di level collection
+        - Untuk melakukan itu, kita bisa menggunakan privileges
+        - Role Function :
+            - db.createRole() : Membuat role baru
+            - db.getRoles() : Mendapatkan role
+            - db.deleteRole() : Menghapus role
+            - db.updateRole() : Mengubah role
