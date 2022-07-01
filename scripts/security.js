@@ -3,11 +3,10 @@
 
 db.createUser(
     {
-        user: "mongo",
-        pwd: "mongo",
+        user: "medio",
+        pwd: "medio",
         roles: [ 
-            "userAdminAnyDatabase",
-            "readWriteAnyDatabase" 
+            "readWrite"
         ]
     }
 )
